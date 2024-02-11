@@ -1,0 +1,30 @@
+import requests
+from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
+
+def scrape_data(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    data = []
+    for row in soup.find_all('tr'):
+        cols = row.find_all('td')
+        if len(cols) >= 2:
+            key = cols[0].text.strip()
+            value = float(cols[1].text.strip().replace(',', ''))
+            data.append((key, value))
+    return data
+
+def visualize_data(data):
+    labels = [item[0] for item in data]
+    values = [item[1] for item in data]
+    plt.bar(labels, values)
+    plt.xticks(rotation=45, ha='right')
+    plt.xlabel('Category')
+    plt.ylabel('Value')
+    plt.title('Data Visualization')
+    plt.show()
+
+if __name__ == "__main__":
+    url = 'https://example.com/data'
+    data = scrape_data(url)
+    visualize_data(data)
